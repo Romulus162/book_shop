@@ -2,14 +2,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require('graphql');
+const mongoose = require('mongoose');
+
+const Book = require('./models/book');
 
 const app = express();
 
-const books = [];
-
 app.use(bodyParser.json());
 
-app.use('/api', graphqlHTTP({
+app.use(
+  '/api',
+  graphqlHTTP({
     schema: buildSchema(`
         type Book {
             _id: ID!
@@ -42,23 +45,48 @@ app.use('/api', graphqlHTTP({
         }
     `),
     rootValue: {
-        books: () =>{
-            return books;
-        },
-        createBook: (args) =>{
-            const book = {
-                _id: Math.random().toString(),
-                title: args.bookInput.title,
-                author: args.bookInput.author,
-                description: args.bookInput.description,
-                price: +args.bookInput.price
-            }
-            console.log(args);
-            books.push(book);
-            return book;
-        }
+      books: () => {
+        return Book.find()
+          .then(books => {
+            return books.map(book => {
+              return { ...book._doc, _id: book.id };
+            });
+          })
+          .catch(err => {
+            throw err;
+          });
+      },
+      createBook: args => {
+        const book = new Book({
+          title: args.bookInput.title,
+          author: args.bookInput.author,
+          description: args.bookInput.description,
+          price: +args.bookInput.price,
+        });
+        console.log(args);
+        return book
+          .save()
+          .then(result => {
+            console.log(result);
+            return { ...result._doc, _id: book.id };
+          })
+          .catch(err => {
+            console.log(err);
+            throw err;
+          });
+      },
     },
-    graphiql: true
-}));
+    graphiql: true,
+  })
+);
 
-app.listen(3000);
+mongoose
+  .connect(
+    `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.kbdo7pq.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
+  )
+  .then(() => {
+    app.listen(3000);
+  })
+  .catch(err => {
+    console.log(err);
+  });
