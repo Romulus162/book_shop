@@ -18,4 +18,4 @@ const staffSchema = new Schema({
   ],
 });
 
-module.exports = mongoos.model('staff', staffSchema);
+module.exports = mongoos.model('Staff', staffSchema);

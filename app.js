@@ -12,6 +12,38 @@ const app = express();
 
 app.use(bodyParser.json());
 
+const bookDataByID = bookID => {
+  return Book.find({
+    _id: { $in: bookID },
+  })
+    .then(books => {
+      return books.map(book => {
+        return {
+          ...book._doc,
+          _id: book.id,
+          adder: staffDataByID.bind(this, book.adder),
+        };
+      });
+    })
+    .catch(err => {
+      throw err;
+    });
+};
+
+const staffDataByID = staffID => {
+  return Staff.findById(staffID)
+    .then(staff => {
+      return {
+        ...staff._doc,
+        _id: staff.id,
+        createdBooks: bookDataByID.bind(this, staff._doc.createdBooks),
+      };
+    })
+    .catch(err => {
+      throw err;
+    });
+};
+
 app.use(
   '/api',
   graphqlHTTP({
@@ -22,6 +54,7 @@ app.use(
             author: String!
             description: String!
             price: Float!
+            adder: Staff!
 
         }
 
@@ -29,6 +62,7 @@ app.use(
             _id: ID!
             email: String!
             password: String
+            createdBooks: [Book!]
         }
 
         input BookInput {
@@ -63,7 +97,11 @@ app.use(
         return Book.find()
           .then(books => {
             return books.map(book => {
-              return { ...book._doc, _id: book.id };
+              return {
+                ...book._doc,
+                _id: book.id,
+                adder: staffDataByID.bind(this, book._doc.adder),
+              };
             });
           })
           .catch(err => {
@@ -83,7 +121,11 @@ app.use(
         return book
           .save()
           .then(result => {
-            createdBook = { ...result._doc, _id: result._doc._id.toString() };
+            createdBook = {
+              ...result._doc,
+              _id: result._doc._id.toString(),
+              adder: staffDataByID.bind(this, result._doc.adder),
+            };
             return Staff.findById('6531b9e808e90fb8d2872da6');
             console.log(result);
           })
