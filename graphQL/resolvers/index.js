@@ -3,34 +3,39 @@ const bcrypt = require('bcryptjs');
 const Book = require('../../models/book');
 const Staff = require('../../models/staff');
 const Order = require('../../models/order');
+const staff = require('../../models/staff');
 
-const bookDataByID = async bookID => {
+const listBooks = async bookIDs => {
   try {
-    const book = await Book.find({
-      _id: { $in: bookID },
+    const books = await Book.find({
+      _id: { $in: bookIDs },
     });
 
-    book.map(book => {
+    books.map(book => {
       return {
         ...book._doc,
         _id: book.id,
         adder: staffDataByID.bind(this, book.adder),
       };
     });
-    return book;
+    return books;
   } catch (err) {
     throw err;
   }
 };
 
-// const singleBook = async bookId => {
-//   try {
-//     const book = await Book.findById(bookId);
-//     return { ...book._doc, _id: book.id, adder:}
-//   } catch (err) {
-//     throw err;
-//   }
-// };
+const singleBook = async bookId => {
+  try {
+    const book = await Book.findById(bookId);
+    return {
+      ...book._doc,
+      _id: book.id,
+      adder: staffDataByID.bind(this, book.adder),
+    };
+  } catch (err) {
+    throw err;
+  }
+};
 
 const staffDataByID = async staffID => {
   try {
@@ -38,7 +43,7 @@ const staffDataByID = async staffID => {
     return {
       ...staff._doc,
       _id: staff.id,
-      createdBooks: bookDataByID.bind(this, staff._doc.createdBooks),
+      createdBooks: listBooks.bind(this, staff._doc.createdBooks),
     };
   } catch (err) {
     throw err;
@@ -67,6 +72,8 @@ module.exports = {
         return {
           ...order._doc,
           _id: order.id,
+          staff: staffDataByID.bind(this, order._doc.staff),
+          book: singleBook.bind(this, order._doc.book),
           createdAt: new Date(order._doc.createdAt).toISOString(),
           updatedAt: new Date(order._doc.updatedAt).toISOString(),
         };
@@ -138,8 +145,26 @@ module.exports = {
     return {
       ...result._doc,
       _id: result.id,
+      staff: staffDataByID.bind(this, order._doc.staff),
+      book: singleBook.bind(this, order._doc.book),
       createdAt: new Date(result._doc.createdAt).toISOString(),
       updatedAt: new Date(result._doc.updatedAt).toISOString(),
     };
+  },
+
+  cancelOrder: async args => {
+    try {
+      const order = await Order.findById(args.orderId).populate('book');
+      const book = {
+        ...order.book._doc,
+        _id: order.book.id,
+        adder: staffDataByID.bind(this, order.book._doc.adder),
+      };
+      console.log(book);
+      await Order.deleteOne({ _id: args.orderId });
+      return book;
+    } catch (err) {
+      throw err;
+    }
   },
 };
