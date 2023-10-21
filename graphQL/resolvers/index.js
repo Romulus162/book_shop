@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 
 const Book = require('../../models/book');
 const Staff = require('../../models/staff');
+const Order = require('../../models/order');
 
 const bookDataByID = async bookID => {
   try {
@@ -21,6 +22,15 @@ const bookDataByID = async bookID => {
     throw err;
   }
 };
+
+// const singleBook = async bookId => {
+//   try {
+//     const book = await Book.findById(bookId);
+//     return { ...book._doc, _id: book.id, adder:}
+//   } catch (err) {
+//     throw err;
+//   }
+// };
 
 const staffDataByID = async staffID => {
   try {
@@ -50,6 +60,22 @@ module.exports = {
       throw err;
     }
   },
+  orders: async () => {
+    try {
+      const orders = await Order.find();
+      return orders.map(order => {
+        return {
+          ...order._doc,
+          _id: order.id,
+          createdAt: new Date(order._doc.createdAt).toISOString(),
+          updatedAt: new Date(order._doc.updatedAt).toISOString(),
+        };
+      });
+    } catch (err) {
+      throw err;
+    }
+  },
+
   createBook: async args => {
     const book = new Book({
       title: args.bookInput.title,
@@ -80,6 +106,7 @@ module.exports = {
       throw err;
     }
   },
+
   createStaff: async args => {
     try {
       const currentStaff = await Staff.findOne({
@@ -99,5 +126,20 @@ module.exports = {
     } catch (err) {
       throw err;
     }
+  },
+
+  orderBook: async args => {
+    const fetchedBook = await Book.findOne({ _id: args.bookId });
+    const order = new Order({
+      staff: '6532e483159dc4f17cc55b61',
+      book: fetchedBook,
+    });
+    const result = await order.save();
+    return {
+      ...result._doc,
+      _id: result.id,
+      createdAt: new Date(result._doc.createdAt).toISOString(),
+      updatedAt: new Date(result._doc.updatedAt).toISOString(),
+    };
   },
 };
