@@ -25,6 +25,12 @@ type Staff {
     createdBooks: [Book!]
 }
 
+type stfAuthData {
+    staffId: ID!
+    token: String!
+    tokenExpiration: Int!
+}
+
 input BookInput {
     title: String!
     author: String!
@@ -40,6 +46,7 @@ input StaffInput {
 type RootQuery {
     books: [Book!]!
     orders: [Order!]!
+    login(email: String!, password: String!): stfAuthData!
 }
 
 type RootMutation {

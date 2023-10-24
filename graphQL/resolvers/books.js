@@ -1,4 +1,5 @@
 const Book = require('../../models/book');
+const Staff = require('../../models/staff');
 const { transformBook } = require('./merge');
 
 module.exports = {
@@ -13,20 +14,23 @@ module.exports = {
     }
   },
 
-  createBook: async args => {
+  createBook: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     const book = new Book({
       title: args.bookInput.title,
       author: args.bookInput.author,
       description: args.bookInput.description,
       price: +args.bookInput.price,
-      adder: '6532e483159dc4f17cc55b61',
+      adder: req.staffId,
     });
     let createdBook;
     try {
       console.log(args);
       const result = await book.save();
       createdBook = transformBook(result);
-      const staff = await Staff.findById('6532e483159dc4f17cc55b61');
+      const staff = await Staff.findById(req.staffId);
       console.log(result);
       if (!staff) {
         throw new Error('Staff not found.');

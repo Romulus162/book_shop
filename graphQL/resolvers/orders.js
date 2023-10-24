@@ -3,7 +3,10 @@ const Order = require('../../models/order');
 const { transformBook, transformOrder } = require('./merge');
 
 module.exports = {
-  orders: async () => {
+  orders: async (_, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const orders = await Order.find();
       return orders.map(order => {
@@ -13,17 +16,23 @@ module.exports = {
       throw err;
     }
   },
-  orderBook: async args => {
+  orderBook: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     const fetchedBook = await Book.findOne({ _id: args.bookId });
     const order = new Order({
-      staff: '6532e483159dc4f17cc55b61',
+      staff: req.staffId,
       book: fetchedBook,
     });
     const result = await order.save();
     return transformOrder(result);
   },
 
-  cancelOrder: async args => {
+  cancelOrder: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
+    }
     try {
       const order = await Order.findById(args.orderId).populate('book');
       const book = transformBook(order.book);
