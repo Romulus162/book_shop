@@ -5,10 +5,9 @@ import AuthPage from './pages/Auth';
 import BooksPage from './pages/Books';
 import OrdersPage from './pages/Orders';
 import MainNavigation from './components/Navigation/MainNav';
-import authContext from './context/auth-context';
+import AuthContext from './context/Auth-context';
 
 import './App.css';
-import AuthContext from './context/auth-context';
 
 class App extends Component {
   state = {
@@ -27,7 +26,7 @@ class App extends Component {
   render() {
     return (
       <BrowserRouter>
-        <authContext.Provider
+        <AuthContext.Provider
           value={{
             token: this.state.token,
             staffId: this.state.staffId,
@@ -38,13 +37,25 @@ class App extends Component {
           <MainNavigation />
           <main className="main-content">
             <Routes>
-              <Route path="/" element={<Navigate to="/auth" />} />
-              <Route path="/auth" element={<AuthPage />} />
+              {!this.state.token && (
+                <Route path="/" element={<Navigate to="/auth" />} />
+              )}
+              {this.state.token && (
+                <Route path="/" element={<Navigate to="/books" />} />
+              )}
+              {this.state.token && (
+                <Route path="/auth" element={<Navigate to="/books" />} />
+              )}
+              {!this.state.token && (
+                <Route path="/auth" element={<AuthPage />} />
+              )}
               <Route path="/books" element={<BooksPage />} />
-              <Route path="/orders" element={<OrdersPage />} />
+              {this.state.token && (
+                <Route path="/orders" element={<OrdersPage />} />
+              )}
             </Routes>
           </main>
-        </authContext.Provider>
+        </AuthContext.Provider>
       </BrowserRouter>
     );
   }

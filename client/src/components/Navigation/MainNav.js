@@ -1,11 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import authContext from '../../context/auth-context';
+import AuthContext from '../../context/Auth-context';
 import './MainNavigation.css';
 
 const MainNavigation = props => (
-  <authContext.Consumer>
+  <AuthContext.Consumer>
     {context => {
       return (
         <header className="main-navigation">
@@ -32,7 +32,7 @@ const MainNavigation = props => (
         </header>
       );
     }}
-  </authContext.Consumer>
+  </AuthContext.Consumer>
 );
 
 export default MainNavigation;
