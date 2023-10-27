@@ -37,19 +37,27 @@ class App extends Component {
           <MainNavigation />
           <main className="main-content">
             <Routes>
-              {!this.state.token && (
-                <Route path="/" element={<Navigate to="/auth" />} />
-              )}
-              {this.state.token && (
-                <Route path="/" element={<Navigate to="/books" />} />
-              )}
-              {this.state.token && (
-                <Route path="/auth" element={<Navigate to="/books" />} />
-              )}
+              <Route path="/books" element={<BooksPage />} />
               {!this.state.token && (
                 <Route path="/auth" element={<AuthPage />} />
               )}
-              <Route path="/books" element={<BooksPage />} />
+
+              {!this.state.token && (
+                <Route path="/" element={<Navigate to="/auth" />} />
+              )}
+
+              {!this.state.token && (
+                <Route path="/orders" element={<Navigate to="/auth" />} />
+              )}
+
+              {this.state.token && (
+                <Route path="/" element={<Navigate to="/books" />} />
+              )}
+
+              {this.state.token && (
+                <Route path="/auth" element={<Navigate to="/books" />} />
+              )}
+
               {this.state.token && (
                 <Route path="/orders" element={<OrdersPage />} />
               )}
