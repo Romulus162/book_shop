@@ -15,8 +15,6 @@ class BooksPage extends Component {
     selectedBook: null,
   };
 
-  isActive = true;
-
   static contextType = AuthContext;
 
   constructor(props) {
@@ -115,6 +113,10 @@ class BooksPage extends Component {
 
   fetchBooks() {
     this.setState({ isLoading: true });
+
+    const controller = new AbortController();
+    const { signal } = controller;
+
     const requestBody = {
       query: `
       query {
@@ -138,6 +140,7 @@ class BooksPage extends Component {
       headers: {
         'Content-Type': 'application/json',
       },
+      signal,
     })
       .then(res => {
         if (res.status !== 200 && res.status !== 201) {
@@ -147,16 +150,17 @@ class BooksPage extends Component {
       })
       .then(resData => {
         const books = resData.data.books;
-        if (this.isActive) {
+        if (!controller.signal.aborted) {
           this.setState({ books: books, isLoading: false });
         }
       })
       .catch(err => {
         console.log(err);
-        if (this.isActive) {
+        if (!controller.signal.aborted) {
           this.setState({ isLoading: false });
         }
       });
+    return controller;
   }
 
   showDetailHandler = bookId => {
@@ -206,7 +210,9 @@ class BooksPage extends Component {
   };
 
   componentWillUnmount() {
-    this.isActive = false;
+    if (this.controller) {
+      this.controller.abort();
+    }
   }
 
   render() {
