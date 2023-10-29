@@ -8,6 +8,7 @@ import './Books.css';
 class BooksPage extends Component {
   state = {
     creating: false,
+    books: [],
   };
 
   static contextType = AuthContext;
@@ -82,7 +83,7 @@ class BooksPage extends Component {
         return res.json();
       })
       .then(resData => {
-        console.log(resData);
+        this.fetchBooks();
       })
       .catch(err => {
         console.log(err);
@@ -125,7 +126,8 @@ class BooksPage extends Component {
         return res.json();
       })
       .then(resData => {
-        console.log(resData);
+        const books = resData.data.books;
+        this.setState({ books: books });
       })
       .catch(err => {
         console.log(err);
@@ -133,6 +135,14 @@ class BooksPage extends Component {
   }
 
   render() {
+    const bookList = this.state.books.map(book => {
+      return (
+        <li key={book._id} className="books__list-item">
+          {book.title}
+        </li>
+      );
+    });
+
     return (
       <>
         {this.state.creating && <Backdrop />}
@@ -176,10 +186,7 @@ class BooksPage extends Component {
             </button>
           </div>
         )}
-        <ul className="books__list">
-          <li className="books__list-item">test</li>
-          <li className="books__list-item">test</li>
-        </ul>
+        <ul className="books__list">{bookList}</ul>
       </>
     );
   }
