@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import AuthContext from '../context/Auth-context';
 import Spinner from '../components/Spinner/Spinner';
+import OrderList from '../components/Orders/OrderList/OrderList';
 
 class OrdersPage extends Component {
   state = {
@@ -62,19 +63,56 @@ class OrdersPage extends Component {
     });
   };
 
+  deleteOrderHandler = orderId => {
+    this.setState({ isLoading: true });
+    const requestBody = {
+      query: `
+      mutation {
+        cancelOrder(orderId: "${orderId}") {
+          _id
+          title
+        }
+      }`,
+    };
+
+    fetch('http://localhost:8000/api', {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.context.token,
+      },
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Failed!');
+        }
+        return res.json();
+      })
+      .then(resData => {
+        this.setState(prevState => {
+          const uppdatedOrders = prevState.orders.filter(order => {
+            return order._id !== orderId;
+          });
+          return { orders: uppdatedOrders, isLoading: false };
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        this.setState({ isLoading: false });
+      });
+  };
+
   render() {
     return (
       <>
         {this.state.isLoading ? (
           <Spinner />
         ) : (
-          <ul>
-            {this.state.orders.map(order => (
-              <li key={order._id}>
-                {order.book.title} - {order.createdAt}
-              </li>
-            ))}
-          </ul>
+          <OrderList
+            orders={this.state.orders}
+            onDelete={this.deleteOrderHandler}
+          />
         )}
       </>
     );

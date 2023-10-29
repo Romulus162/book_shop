@@ -8,7 +8,8 @@ module.exports = {
       throw new Error('Unauthenticated!');
     }
     try {
-      const orders = await Order.find();
+      //{ staff: req.staffId } is only for playing around right now, this will not be included in the future, alternativly this will be in customers viewport when development starts there
+      const orders = await Order.find({ staff: req.staffId });
       return orders.map(order => {
         return transformOrder(order);
       });
