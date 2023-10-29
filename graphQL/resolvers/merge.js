@@ -1,6 +1,17 @@
+const DataLoader = require('dataloader');
+
 const Book = require('../../models/book');
 const Staff = require('../../models/staff');
 const { dateToString } = require('../../helpers/date');
+
+const bookLoader = new DataLoader(bookIds => {
+  return listBooks(bookIds);
+});
+
+const staffLoader = new DataLoader(staffIds => {
+  console.log(staffIds);
+  return Staff.find({ _id: { $in: staffIds } });
+});
 
 const listBooks = async bookIDs => {
   try {
@@ -19,20 +30,20 @@ const listBooks = async bookIDs => {
 
 const singleBook = async bookId => {
   try {
-    const book = await Book.findById(bookId);
-    return transformBook(book);
+    const book = await bookLoader.load(bookId.toString());
+    return book;
   } catch (err) {
     throw err;
   }
 };
 
-const staffDataByID = async staffID => {
+const staffDataByID = async staffId => {
   try {
-    const staff = await Staff.findById(staffID);
+    const staff = await staffLoader.load(staffId.toString());
     return {
       ...staff._doc,
       _id: staff.id,
-      createdBooks: listBooks.bind(this, staff._doc.createdBooks),
+      createdBooks: bookLoader.load.bind(this, staff._doc.createdBooks),
     };
   } catch (err) {
     throw err;
