@@ -15,6 +15,8 @@ class BooksPage extends Component {
     selectedBook: null,
   };
 
+  isActive = true;
+
   static contextType = AuthContext;
 
   constructor(props) {
@@ -145,11 +147,15 @@ class BooksPage extends Component {
       })
       .then(resData => {
         const books = resData.data.books;
-        this.setState({ books: books, isLoading: false });
+        if (this.isActive) {
+          this.setState({ books: books, isLoading: false });
+        }
       })
       .catch(err => {
         console.log(err);
-        this.setState({ isLoading: false });
+        if (this.isActive) {
+          this.setState({ isLoading: false });
+        }
       });
   }
 
@@ -160,7 +166,48 @@ class BooksPage extends Component {
     });
   };
 
-  orderBookHandler = () => {};
+  orderBookHandler = () => {
+    if (!this.context.token) {
+      this.setState({ selectedBook: null });
+      return;
+    }
+    const requestBody = {
+      query: `
+      mutation {
+        orderBook(bookId: "${this.state.selectedBook._id}") {
+          _id
+          createdAt
+          updatedAt
+        }
+      }`,
+    };
+
+    fetch('http://localhost:8000/api', {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + this.context.token,
+      },
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Failed!');
+        }
+        return res.json();
+      })
+      .then(resData => {
+        console.log(resData);
+        this.setState({ selectedBook: null });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  componentWillUnmount() {
+    this.isActive = false;
+  }
 
   render() {
     return (
@@ -206,7 +253,7 @@ class BooksPage extends Component {
             canConfirm
             onCancel={this.cancelHandler}
             onConfirm={this.orderBookHandler}
-            confirmText="Order"
+            confirmText={this.context.token ? 'Order' : 'Confirm'}
           >
             <h1>{this.state.selectedBook.title}</h1>
             <h2>
