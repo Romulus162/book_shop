@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import Modal from '../components/Modal/Modal';
 import Backdrop from '../components/Backdrop/Backdrop';
+import BookList from '../components/Books/BookList/BookList';
+import Spinner from '../components/Spinner/Spinner';
 import AuthContext from '../context/Auth-context';
 import './Books.css';
 
@@ -9,6 +11,8 @@ class BooksPage extends Component {
   state = {
     creating: false,
     books: [],
+    isLoading: false,
+    selectedBook: null,
   };
 
   static contextType = AuthContext;
@@ -83,7 +87,20 @@ class BooksPage extends Component {
         return res.json();
       })
       .then(resData => {
-        this.fetchBooks();
+        this.setState(prevState => {
+          const updatedBooks = [...prevState.books];
+          updatedBooks.push({
+            _id: resData.data.createBook._id,
+            title: resData.data.createBook.title,
+            author: resData.data.createBook.author,
+            description: resData.data.createBook.description,
+            price: resData.data.createBook.price,
+            adder: {
+              _id: this.context.staffId,
+            },
+          });
+          return { books: updatedBooks };
+        });
       })
       .catch(err => {
         console.log(err);
@@ -91,10 +108,11 @@ class BooksPage extends Component {
   };
 
   cancelHandler = () => {
-    this.setState({ creating: false });
+    this.setState({ creating: false, selectedBook: null });
   };
 
   fetchBooks() {
+    this.setState({ isLoading: true });
     const requestBody = {
       query: `
       query {
@@ -127,25 +145,27 @@ class BooksPage extends Component {
       })
       .then(resData => {
         const books = resData.data.books;
-        this.setState({ books: books });
+        this.setState({ books: books, isLoading: false });
       })
       .catch(err => {
         console.log(err);
+        this.setState({ isLoading: false });
       });
   }
 
-  render() {
-    const bookList = this.state.books.map(book => {
-      return (
-        <li key={book._id} className="books__list-item">
-          {book.title}
-        </li>
-      );
+  showDetailHandler = bookId => {
+    this.setState(prevState => {
+      const selectedBook = prevState.books.find(e => e._id === bookId);
+      return { selectedBook: selectedBook };
     });
+  };
 
+  orderBookHandler = () => {};
+
+  render() {
     return (
       <>
-        {this.state.creating && <Backdrop />}
+        {(this.state.creating || this.state.selectedBook) && <Backdrop />}
         {this.state.creating && (
           <Modal
             title="Add Book"
@@ -153,6 +173,7 @@ class BooksPage extends Component {
             canConfirm
             onCancel={this.cancelHandler}
             onConfirm={this.confirmHandler}
+            confirmText="Confirm"
           >
             <form>
               <div className="form-control">
@@ -178,6 +199,23 @@ class BooksPage extends Component {
             </form>
           </Modal>
         )}
+        {this.state.selectedBook && (
+          <Modal
+            title={this.state.selectedBook.title}
+            canCancel
+            canConfirm
+            onCancel={this.cancelHandler}
+            onConfirm={this.orderBookHandler}
+            confirmText="Order"
+          >
+            <h1>{this.state.selectedBook.title}</h1>
+            <h2>
+              {this.state.selectedBook.author} - $
+              {this.state.selectedBook.price}
+            </h2>
+            <p>{this.state.selectedBook.description}</p>
+          </Modal>
+        )}
         {this.context.token && (
           <div className="books-control">
             <p>Share your liked books!</p>
@@ -186,7 +224,15 @@ class BooksPage extends Component {
             </button>
           </div>
         )}
-        <ul className="books__list">{bookList}</ul>
+        {this.state.isLoading ? (
+          <Spinner />
+        ) : (
+          <BookList
+            books={this.state.books}
+            authStaffId={this.context.staffId}
+            onViewDetail={this.showDetailHandler}
+          />
+        )}
       </>
     );
   }

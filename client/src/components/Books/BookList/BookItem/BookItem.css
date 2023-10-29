@@ -1,0 +1,24 @@
+.books__list-item {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid blue;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.books__list-item h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: rgb(2, 129, 129);
+}
+
+.books__list-item h2 {
+  margin: 0;
+  font-size: 1rem;
+  color: rgb(122, 0, 0);
+}
+
+.books__list-item p {
+  margin: 0;
+}
