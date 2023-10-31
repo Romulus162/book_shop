@@ -67,12 +67,15 @@ class OrdersPage extends Component {
     this.setState({ isLoading: true });
     const requestBody = {
       query: `
-      mutation {
-        cancelOrder(orderId: "${orderId}") {
+      mutation CancelBooking($id: ID!) {
+        cancelOrder(orderId: $id) {
           _id
           title
         }
       }`,
+      variables: {
+        id: orderId,
+      },
     };
 
     fetch('http://localhost:8000/api', {

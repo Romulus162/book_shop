@@ -54,8 +54,8 @@ class BooksPage extends Component {
 
     const requestBody = {
       query: `
-          mutation {
-            createBook(bookInput: {title: "${title}", author: "${author}", description: "${description}", price: ${price}}){
+          mutation CreateBook($title: String!, $author: String!, $price: Float!, $desc: String!){
+            createBook(bookInput: {title: $title, author: $author, description: $desc, price: $price}){
               _id
               title
               author
@@ -68,6 +68,12 @@ class BooksPage extends Component {
             }
           }
             `,
+      variables: {
+        title: title,
+        author: author,
+        price: price,
+        desc: description,
+      },
     };
 
     const token = this.context.token;
@@ -177,13 +183,16 @@ class BooksPage extends Component {
     }
     const requestBody = {
       query: `
-      mutation {
-        orderBook(bookId: "${this.state.selectedBook._id}") {
+      mutation OrderBook($id: ID!) {
+        orderBook(bookId: $id) {
           _id
           createdAt
           updatedAt
         }
       }`,
+      variables: {
+        id: this.state.selectedBook._id,
+      },
     };
 
     fetch('http://localhost:8000/api', {
