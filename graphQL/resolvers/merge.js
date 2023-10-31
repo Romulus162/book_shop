@@ -8,6 +8,7 @@ const bookLoader = new DataLoader(bookIds => {
   return listBooks(bookIds);
 });
 
+//want to use this, but because of nasty bug, it doesn't make sense to use it
 const staffLoader = new DataLoader(staffIds => {
   console.log(staffIds);
   return Staff.find({ _id: { $in: staffIds } });
@@ -37,13 +38,13 @@ const singleBook = async bookId => {
   }
 };
 
-const staffDataByID = async staffId => {
+const staffDataByID = async staffID => {
   try {
-    const staff = await staffLoader.load(staffId.toString());
+    const staff = await Staff.findById(staffID);
     return {
       ...staff._doc,
       _id: staff.id,
-      createdBooks: bookLoader.load.bind(this, staff._doc.createdBooks),
+      createdBooks: listBooks.bind(this, staff._doc.createdBooks),
     };
   } catch (err) {
     throw err;
