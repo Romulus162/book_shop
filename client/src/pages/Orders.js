@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import AuthContext from '../context/Auth-context';
 import Spinner from '../components/Spinner/Spinner';
 import OrderList from '../components/Orders/OrderList/OrderList';
+import Chart from '../components/Orders/Chart/Chart';
+import OrdersControl from '../components/Orders/Controls/Controls';
 
 class OrdersPage extends Component {
   state = {
     isLoading: false,
     orders: [],
+    outputType: 'list',
   };
 
   static contextType = AuthContext;
@@ -27,6 +30,7 @@ class OrdersPage extends Component {
             _id
             title
             author
+            price
           }
         }
       }`,
@@ -106,19 +110,38 @@ class OrdersPage extends Component {
       });
   };
 
+  changeOutputTypeHandler = outputType => {
+    if (outputType === 'list') {
+      this.setState({ outputType: 'list' });
+    } else {
+      this.setState({ outputType: 'chart' });
+    }
+  };
+
   render() {
-    return (
-      <>
-        {this.state.isLoading ? (
-          <Spinner />
-        ) : (
-          <OrderList
-            orders={this.state.orders}
-            onDelete={this.deleteOrderHandler}
+    let content = <Spinner />;
+    if (!this.state.isLoading) {
+      content = (
+        <>
+          <OrdersControl
+            activeOutputType={this.state.outputType}
+            onChange={this.changeOutputTypeHandler}
           />
-        )}
-      </>
-    );
+          <div></div>
+          <div>
+            {this.state.outputType === 'list' ? (
+              <OrderList
+                orders={this.state.orders}
+                onDelete={this.deleteOrderHandler}
+              />
+            ) : (
+              <Chart orders={this.state.orders} />
+            )}
+          </div>
+        </>
+      );
+    }
+    return <>{content}</>;
   }
 }
 
