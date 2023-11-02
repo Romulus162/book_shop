@@ -16,14 +16,16 @@ const staffLoader = new DataLoader(staffIds => {
 
 const listBooks = async bookIDs => {
   try {
-    const books = await Book.find({
-      _id: { $in: bookIDs },
+    const books = await Book.find({ _id: { $in: bookIDs } });
+    books.sort((a, b) => {
+      return (
+        bookIDs.indexOf(a._id.toString()) - bookIDs.indexOf(b._id.toString())
+      );
     });
-
-    books.map(book => {
+    console.log(books, bookIDs);
+    return books.map(book => {
       return transformBook(book);
     });
-    return books;
   } catch (err) {
     throw err;
   }
@@ -50,6 +52,22 @@ const staffDataByID = async staffID => {
     throw err;
   }
 };
+
+//Theoretically should be way more efficient in regards to less queries/requests
+//issue is that the code below has a really nasty unsolved bug
+
+// const staffDataByID = async staffId => {
+//   try {
+//     const staff = await staffLoader.load(staffId.toString());
+//     return {
+//       ...staff._doc,
+//       _id: staff.id,
+//       createdBooks: bookLoader.loadMany(staff._doc.createdBooks),
+//     };
+//   } catch (err) {
+//     throw err;
+//   }
+// };
 
 const transformBook = book => {
   return {
