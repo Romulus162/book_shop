@@ -2,10 +2,13 @@ import React from 'react';
 
 import './BookItem.css';
 
-const BookItem = props => (
-  <li key={props.bookId} className="books_list-item">
+const BookItem = ({ book }) => (
+  <li className="books_list-item">
     <div>
-      <h1></h1>
+      <h1>{book.title}</h1>
+      <h2>{book.author}</h2>
+      <p>{book.description}</p>
+      <div>Price: ${book.price.toFixed(2)}</div>
     </div>
   </li>
 );

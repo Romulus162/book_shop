@@ -10,7 +10,7 @@ const MainNavigation = props => (
       return (
         <header className="main-navigation">
           <div className="main-navigation__logo">
-            <h1>EpicBooks</h1>
+            <h1>AdminPortal</h1>
           </div>
           <div className="main-navigation__items">
             <ul>
