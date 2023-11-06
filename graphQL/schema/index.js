@@ -18,6 +18,11 @@ type Book {
     adder: Staff!
 }
 
+type Genre {
+    _id: ID!
+    name: String!
+}
+
 type Staff {
     _id: ID!
     email: String!
@@ -38,6 +43,10 @@ input BookInput {
     price: Float!
 }
 
+input GenreInput {
+    name: String!
+}
+
 input StaffInput {
     email: String!
     password: String!
@@ -45,12 +54,14 @@ input StaffInput {
 
 type RootQuery {
     books: [Book!]!
+    genres: [Genre!]!
     orders: [Order!]!
     login(email: String!, password: String!): stfAuthData!
 }
 
 type RootMutation {
     createBook(bookInput: BookInput): Book
+    createGenre(genreInput: GenreInput): Genre
     createStaff(staffInput: StaffInput): Staff
     orderBook(bookId: ID!): Order!
     cancelOrder(orderId: ID!): Book!
