@@ -13,6 +13,9 @@ const Navigation = props => (
         <li>
           <NavLink to="/inventory">Inventory</NavLink>
         </li>
+        <li>
+          <NavLink to="/profile">Profile</NavLink>
+        </li>
       </ul>
     </div>
   </header>
