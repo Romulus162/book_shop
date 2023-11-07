@@ -1,0 +1,16 @@
+.Inventory-display {
+  margin: auto;
+  width: 80%;
+  max-width: 1200px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.Inventory-display p {
+  text-align: center;
+  font-size: 1.2em;
+}
+
+.Inventory-display button {
+  margin-bottom: 1rem;
+}

@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
 import './Inventory.css';
 import BookList from '../components/BookList/BookList';
+import GenrePopup from '../components/GenrePopup/GenrePopup';
 
 class InventoryPage extends Component {
   state = {
     loading: true,
     books: [],
+    showGenres: false,
+  };
+
+  toggleGenresPopup = () => {
+    this.setState(prevState => ({ showGenres: !prevState.showGenres }));
   };
 
   componentDidMount() {
@@ -50,6 +56,8 @@ class InventoryPage extends Component {
   render() {
     return (
       <div className="Inventory-display">
+        <button onClick={this.toggleGenresPopup}>Genres</button>
+        {this.state.showGenres && <GenrePopup />}
         {this.state.loading ? (
           <p>Loading books...</p>
         ) : (
