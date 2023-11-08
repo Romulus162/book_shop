@@ -30,8 +30,20 @@ type Staff {
     createdBooks: [Book!]
 }
 
+type User {
+    _id: ID!
+    email: String!
+    password: String
+  }
+
 type stfAuthData {
     staffId: ID!
+    token: String!
+    tokenExpiration: Int!
+}
+
+type usrAuthData {
+    userId: ID!
     token: String!
     tokenExpiration: Int!
 }
@@ -52,17 +64,24 @@ input StaffInput {
     password: String!
 }
 
+input UserInput {
+    email: String!
+    password: String!
+  }
+
 type RootQuery {
     books: [Book!]!
     genres: [Genre!]!
     orders: [Order!]!
     login(email: String!, password: String!): stfAuthData!
+    usrLogin(email: String!, password: String!): usrAuthData!
 }
 
 type RootMutation {
     createBook(bookInput: BookInput): Book
     createGenre(genreInput: GenreInput): Genre
     createStaff(staffInput: StaffInput): Staff
+    createUser(userInput: UserInput): User
     orderBook(bookId: ID!): Order!
     cancelOrder(orderId: ID!): Book!
 }

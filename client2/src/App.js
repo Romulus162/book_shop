@@ -6,6 +6,7 @@ import InventoryPage from './pages/Inventory';
 import ProfilePage from './pages/ProfilePage';
 
 import './App.css';
+import AuthPage from './pages/AuthPage';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Routes>
           <Route path="/inventory" element={<InventoryPage />}></Route>
           <Route path="/profile" element={<ProfilePage />}></Route>
+          <Route path="/auth" element={<AuthPage />}></Route>
         </Routes>
       </main>
     </BrowserRouter>
