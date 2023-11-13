@@ -74,11 +74,11 @@ class AuthPage extends Component {
         return res.json();
       })
       .then(resData => {
-        if (resData.data.login.token) {
+        if (resData.data.usrLogin.token) {
           this.context.login(
-            resData.data.login.token,
-            resData.data.login.userId,
-            resData.data.login.tokenExpiration
+            resData.data.usrLogin.token,
+            resData.data.usrLogin.userId,
+            resData.data.usrLogin.tokenExpiration
           );
         }
       })
