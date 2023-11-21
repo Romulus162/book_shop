@@ -6,6 +6,7 @@ import InventoryPage from './pages/Inventory';
 import ProfilePage from './pages/ProfilePage';
 import AuthPage from './pages/AuthPage';
 import AuthContext from './context/Auth-context';
+import BookPage from './pages/BookPage';
 
 import './App.css';
 
@@ -38,6 +39,7 @@ class App extends Component {
             <Routes>
               <Route path="/inventory" element={<InventoryPage />} />
               <Route path="/" element={<Navigate to="/inventory" />} />
+              <Route path="/books/:id" element={<BookPage />} />
 
               {!this.state.token && (
                 <Route path="/auth" element={<AuthPage />} />
