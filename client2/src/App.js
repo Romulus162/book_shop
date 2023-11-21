@@ -37,22 +37,23 @@ class App extends Component {
           <main className="main-content">
             <Routes>
               <Route path="/inventory" element={<InventoryPage />} />
+              <Route path="/" element={<Navigate to="/inventory" />} />
 
               {!this.state.token && (
                 <Route path="/auth" element={<AuthPage />} />
               )}
-
+              {/*
               {!this.state.token && (
                 <Route path="/" element={<Navigate to="/auth" />} />
-              )}
+              )} */}
 
               {!this.state.token && (
                 <Route path="/profile" element={<Navigate to="/auth" />} />
               )}
 
-              {this.state.token && (
+              {/* {this.state.token && (
                 <Route path="/" element={<Navigate to="/inventory" />} />
-              )}
+              )} */}
 
               {this.state.token && (
                 <Route path="/auth" element={<Navigate to="/inventory" />} />
