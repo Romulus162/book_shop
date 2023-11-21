@@ -39,7 +39,9 @@ class App extends Component {
             <Routes>
               <Route path="/inventory" element={<InventoryPage />} />
               <Route path="/" element={<Navigate to="/inventory" />} />
-              <Route path="/books/:id" element={<BookPage />} />
+              {/* <Route path="/books/:id" element={<BookPage />} />
+               */}
+              <Route path="/books" element={<BookPage />} />
 
               {!this.state.token && (
                 <Route path="/auth" element={<AuthPage />} />

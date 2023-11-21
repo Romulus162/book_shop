@@ -1,34 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import './BookPage.css';
 
-const BookPage = ({ match }) => {
-  const [book, setBook] = useState(null);
-  const bookId = match.book.id;
-
-  useEffect(() => {
-    const fetchBookData = async () => {
-      const mockData = {
-        _id: bookId,
-        title: 'Mock Book Title',
-        author: 'Mock Author',
-        description: 'Mock Desciption blah blah blah',
-        price: 19.99,
-      };
-      setBook(mockData);
-    };
-    fetchBookData();
-  }, [bookId]);
-
-  if (!book) {
-    return <div>Loading...</div>;
-  }
+const BookPage = () => {
+  const handleOrder = () => {
+    console.log('Order btn pressed');
+  };
 
   return (
-    <div className="book-page">
-      <h1>{book.title}</h1>
-      <h2>by {book.author}</h2>
-      <p>{book.description}</p>
-      <div>Price: ${book.price.toFixed(2)}</div>
+    <div className="book-container">
+      <h1>Book Name</h1>
+      <div className="book-info">
+        <img src="book-picture-url.jpg" alt="Bkimg" />
+        <h2>Book author</h2>
+        <p>description</p>
+        <p>price</p>
+
+        <button onClick={handleOrder} className="order-bk-btn">
+          Order
+        </button>
+      </div>
     </div>
   );
 };
