@@ -71,6 +71,7 @@ input UserInput {
 
 type RootQuery {
     books: [Book!]!
+    book(id: ID!): Book
     genres: [Genre!]!
     orders: [Order!]!
     login(email: String!, password: String!): stfAuthData!

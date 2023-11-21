@@ -14,6 +14,15 @@ module.exports = {
     }
   },
 
+  book: async ({ id }) => {
+    try {
+      const book = await Book.findById(id);
+      return book;
+    } catch (err) {
+      throw err;
+    }
+  },
+
   createBook: async (args, req) => {
     if (!req.isAuth) {
       throw new Error('Unauthenticated!');
