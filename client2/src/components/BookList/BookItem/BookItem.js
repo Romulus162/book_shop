@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import './BookItem.css';
 
 const BookItem = ({ book }) => (
-  <Link to={`/books/${book.id}`} className="books_list-item">
+  <Link to={`/books/${book._id}`} className="books_list-item">
     <div>
       <h1>{book.title}</h1>
       <h2>{book.author}</h2>

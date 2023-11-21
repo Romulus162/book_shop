@@ -3,26 +3,28 @@ import { useParams } from 'react-router-dom';
 import './BookPage.css';
 
 const BookPage = () => {
-  const handleOrder = () => {
-    console.log('Order btn pressed');
-  };
+  const [book, setBook] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { bookId } = useParams();
+
+  useEffect(() => {
+    fetchBooks();
+  }, [bookId]);
 
   const fetchBooks = () => {
     const requestBody = {
       query: `
-      query{
-        books {
-          _id
-          title
-          author
-          price
-          description
-          adder {
-            _id
-            email
-          }
+      query Book($id: ID!) {
+        book(id: $id) {
+            title
+            author
+            description
+            price
         }
       }`,
+      variables: {
+        id: bookId,
+      },
     };
 
     fetch('http://localhost:8000/api', {
@@ -34,27 +36,43 @@ const BookPage = () => {
     })
       .then(res => res.json())
       .then(resData => {
-        this.setState({ books: resData.data.books, loading: false });
+        if (resData.data.book) {
+          setBook(resData.data.book);
+        }
+        setLoading(false);
       })
       .catch(err => {
         console.log(err);
-        this.setState({ loading: false });
+        this.setLoading(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setLoading(false);
       });
+  };
+
+  const handleOrder = () => {
+    console.log('Order btn pressed');
   };
 
   return (
     <div className="book-container">
-      <h1>Book Name</h1>
-      <div className="book-info">
-        <img src="book-picture-url.jpg" alt="Bkimg" />
-        <h2>Book author</h2>
-        <p>description</p>
-        <p>price</p>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          <h1>{book?.title}</h1>
+          <div className="book-info">
+            <h2>{book?.author}</h2>
+            <p>{book?.description}</p>
+            <p>${book?.price}</p>
 
-        <button onClick={handleOrder} className="order-bk-btn">
-          Order
-        </button>
-      </div>
+            <button onClick={handleOrder} className="order-bk-btn">
+              Order
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
