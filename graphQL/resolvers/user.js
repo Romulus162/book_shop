@@ -40,4 +40,24 @@ module.exports = {
     );
     return { userId: user.id, token: token, tokenExpiration: 1 };
   },
+  updateUser: async ({ userId, userInput }) => {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('User not found.');
+      }
+
+      if (userInput.profilePicture) {
+        user.profilePicture = userInput.profilePicture;
+      }
+      if (userInput.description) {
+        user.description = userInput.description;
+      }
+
+      const updateUser = await user.save();
+      return { ...updatedUser._doc, password: null };
+    } catch (err) {
+      throw err;
+    }
+  },
 };

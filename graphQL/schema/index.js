@@ -34,7 +34,11 @@ type User {
     _id: ID!
     email: String!
     password: String
+    profilePicture: String
+    description: String
   }
+
+
 
 type stfAuthData {
     staffId: ID!
@@ -69,6 +73,13 @@ input UserInput {
     password: String!
   }
 
+input UpdateUserInput {
+    email: String
+    password: String
+    profilePicture: String
+    description: String
+}
+
 type RootQuery {
     books: [Book!]!
     book(id: ID!): Book
@@ -76,6 +87,7 @@ type RootQuery {
     orders: [Order!]!
     login(email: String!, password: String!): stfAuthData!
     usrLogin(email: String!, password: String!): usrAuthData!
+    user(userId: ID!): User
 }
 
 type RootMutation {
@@ -83,6 +95,7 @@ type RootMutation {
     createGenre(genreInput: GenreInput): Genre
     createStaff(staffInput: StaffInput): Staff
     createUser(userInput: UserInput): User
+    updateUser(userId: ID!, userInput: UpdateUserInput): User
     orderBook(bookId: ID!): Order!
     cancelOrder(orderId: ID!): Book!
 }
