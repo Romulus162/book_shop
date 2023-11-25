@@ -1,10 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './ProfilePage.css';
 
 const Profile = () => {
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const query = `
+    query {
+      *this is where the query schema request goes but it doesn't exist yet*
+    }`;
+
+      const response = await fetch('GRAPHQL_ENDPOINT', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+        //gonnna need to verify token here somewhere
+      });
+
+      const result = await response.json();
+      setUserData('need to fetch currentUser Data');
+    };
+
+    fetchUserData();
+  }, []);
+
   const handleEditProfile = () => {
     console.log('Edit Profile Clicked');
   };
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="profile-container">
