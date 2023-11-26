@@ -11,7 +11,7 @@ const Profile = () => {
       *this is where the query schema request goes but it doesn't exist yet*
     }`;
 
-      const response = await fetch('GRAPHQL_ENDPOINT', {
+      const response = await fetch('http://localhost:8000/api', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query }),
