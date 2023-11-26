@@ -24,6 +24,9 @@ module.exports = {
       throw err;
     }
   },
+
+  //Everything below is either non working or just not implemented properly
+
   usrLogin: async ({ email, password }) => {
     const user = await User.findOne({ email: email });
     if (!user) {

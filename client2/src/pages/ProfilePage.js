@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './ProfilePage.css';
 
+//this entire page is just a huge mess
+
 const Profile = () => {
   const [userData, setUserData] = useState(null);
 

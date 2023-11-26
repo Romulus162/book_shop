@@ -10,6 +10,9 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+
+  //this stuff bellow is not working as intended in other places
+
   profilePicture: {
     type: String,
     required: false,
