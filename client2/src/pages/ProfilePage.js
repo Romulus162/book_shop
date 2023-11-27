@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
 import './ProfilePage.css';
 import AuthContext from '../context/Auth-context';
 //this entire page is just a huge mess
@@ -7,9 +6,9 @@ import AuthContext from '../context/Auth-context';
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { userId } = useParams();
 
   const authContext = useContext(AuthContext);
+  const userId = authContext.userId;
 
   useEffect(() => {
     const fetchUserData = async () => {
