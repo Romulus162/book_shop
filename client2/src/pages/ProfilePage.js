@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import './ProfilePage.css';
 import AuthContext from '../context/Auth-context';
-//this entire page is just a huge mess
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -38,7 +37,6 @@ const Profile = () => {
             Authorization: 'Bearer ' + token,
           },
           body: JSON.stringify(requestBody),
-          //gonnna need to verify token here somewhere
         });
         const result = await response.json();
         if (result.data && result.data.user) {
