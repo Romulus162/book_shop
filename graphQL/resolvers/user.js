@@ -63,4 +63,15 @@ module.exports = {
       throw err;
     }
   },
+  user: async args => {
+    try {
+      const user = await User.findById(args.userId);
+      if (!user) {
+        throw new Error('User not found.');
+      }
+      return { ...user._doc, password: null };
+    } catch (err) {
+      throw err;
+    }
+  },
 };

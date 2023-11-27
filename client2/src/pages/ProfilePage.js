@@ -1,53 +1,87 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { useParams } from 'react-router-dom';
 import './ProfilePage.css';
-
+import AuthContext from '../context/Auth-context';
 //this entire page is just a huge mess
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { userId } = useParams();
+
+  const authContext = useContext(AuthContext);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const query = `
-    query {
-      *this is where the query schema request goes but it doesn't exist yet*
-    }`;
+      const requestBody = {
+        query: `
+      query GetUser($userId: ID!) {
+        user(userId: $userId) {
+          _id
+          email
+          profilePicture
+          description
+        }
+      }
+    `,
+        variables: {
+          userId: userId,
+        },
+      };
 
-      const response = await fetch('http://localhost:8000/api', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query }),
-        //gonnna need to verify token here somewhere
-      });
+      try {
+        const token = authContext.token;
+        const response = await fetch('http://localhost:8000/api', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
 
-      const result = await response.json();
-      setUserData('need to fetch currentUser Data');
+            Authorization: 'Bearer ' + token,
+          },
+          body: JSON.stringify(requestBody),
+          //gonnna need to verify token here somewhere
+        });
+        const result = await response.json();
+        if (result.data && result.data.user) {
+          setUserData(result.data.user);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setLoading(false);
+      }
     };
 
     fetchUserData();
-  }, []);
+  }, [userId]);
 
   const handleEditProfile = () => {
     console.log('Edit Profile Clicked');
   };
 
   if (!userData) {
-    return <div>Loading...</div>;
+    return <div>User not found</div>;
   }
 
   return (
     <div className="profile-container">
-      <h1>User Profile</h1>
-      <div className="profile-info">
-        <img src="profile-picture-url.jpg" alt="Profile" />
-        <h2>John Doe</h2>
-        <p>Email: meow@cat.com</p>
-        <p>About: blahblahblah</p>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          <h1>User Profile</h1>
+          <div className="profile-info">
+            <img src="profile-picture-url.jpg" alt="Profile" />
+            <h2>{userData.email}</h2>
+            <p>Email: {userData.email}</p>
+            <p>About: {userData.description} </p>
 
-        <button onClick={handleEditProfile} className="edit-profile-btn">
-          Edit Profile
-        </button>
-      </div>
+            <button onClick={handleEditProfile} className="edit-profile-btn">
+              Edit Profile
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
