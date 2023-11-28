@@ -74,8 +74,6 @@ input UserInput {
   }
 
 input UpdateUserInput {
-    email: String
-    password: String
     profilePicture: String
     description: String
 }
