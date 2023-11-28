@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './Inventory.css';
 import BookList from '../components/BookList/BookList';
 import GenrePopup from '../components/GenrePopup/GenrePopup';
+import Spinner from '../components/Spinner/Spinner';
 
 class InventoryPage extends Component {
   state = {
@@ -59,7 +60,7 @@ class InventoryPage extends Component {
         <button onClick={this.toggleGenresPopup}>Genres</button>
         {this.state.showGenres && <GenrePopup />}
         {this.state.loading ? (
-          <p>Loading books...</p>
+          <Spinner />
         ) : (
           <BookList books={this.state.books} />
         )}

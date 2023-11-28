@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import './ProfilePage.css';
+import Spinner from '../components/Spinner/Spinner';
 import AuthContext from '../context/Auth-context';
 
 const Profile = () => {
@@ -56,14 +57,10 @@ const Profile = () => {
     console.log('Edit Profile Clicked');
   };
 
-  if (!userData) {
-    return <div>User not found</div>;
-  }
-
   return (
     <div className="profile-container">
       {loading ? (
-        <p>Loading...</p>
+        <Spinner />
       ) : (
         <>
           <h1>User Profile</h1>
