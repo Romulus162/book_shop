@@ -10,6 +10,8 @@ import BookPage from './pages/BookPage';
 
 import './App.css';
 
+//this is my first commit of the new year, this is my new year resolution, to make a commit everyday for the rest of the year. This is the only time I will cheat and make such a pitiful commit
+
 class App extends Component {
   state = {
     token: null,
