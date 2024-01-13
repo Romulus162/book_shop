@@ -22,6 +22,9 @@ const Navigation = props => (
               <li>
                 <NavLink to="/inventory">Inventory</NavLink>
               </li>
+              <li>
+                <NavLink to="/music">Music</NavLink>
+              </li>
               {context.token && (
                 <>
                   <li>

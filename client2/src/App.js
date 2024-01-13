@@ -6,6 +6,7 @@ import InventoryPage from './pages/Inventory';
 import ProfilePage from './pages/ProfilePage';
 import AuthPage from './pages/AuthPage';
 import AuthContext from './context/Auth-context';
+import MusicPage from './pages/Music';
 import BookPage from './pages/BookPage';
 
 import './App.css';
@@ -40,6 +41,7 @@ class App extends Component {
           <main className="main-content">
             <Routes>
               <Route path="/inventory" element={<InventoryPage />} />
+              <Route path="/music" element={<MusicPage />} />
               <Route path="/" element={<Navigate to="/inventory" />} />
               {/* <Route path="/books/:id" element={<BookPage />} />
                */}
